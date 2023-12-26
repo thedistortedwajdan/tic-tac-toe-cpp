@@ -4,68 +4,167 @@
 
 using namespace std;
 
-void draw_board(char (&board)[3][3])
+void draw_board(char **board, int n)
 {
-    cout << "     |     |     " << endl;
-    cout << "  " << board[0][0] << "  |  " << board[0][1] << "  |  " << board[0][2] << endl;
-    cout << "_____|_____|_____" << endl;
-    cout << "     |     |     " << endl;
-    cout << "  " << board[1][0] << "  |  " << board[1][1] << "  |  " << board[1][2] << endl;
-    cout << "_____|_____|_____" << endl;
-    cout << "     |     |     " << endl;
-    cout << "   " << board[2][0] << " |  " << board[2][1] << "  |  " << board[2][2] << endl;
 
-    cout << "     |     |     " << endl
-         << endl;
+    for (int row = 0; row < n; row++)
+    {
+        cout << "  ";
+        for (int col = 0; col < n; col++)
+        {
+            cout << board[row][col];
+            if (col != n - 1)
+            {
+                cout << "  |  ";
+            }
+            else
+            {
+                cout << endl;
+            }
+        }
+        if (row != n - 1)
+        {
+            for (int j = 0; j < 2; j++)
+            {
+                for (int i = 0; i < n; i++)
+                {
+                    if (j == 0)
+                    {
+                        cout << "_____";
+                        if (i != n - 1)
+                        {
+                            cout << "|";
+                        }
+                    }
+                    else
+                    {
+                        cout << "     ";
+                        if (i != n - 1)
+                        {
+                            cout << "|";
+                        }
+                    }
+                }
+                cout << endl;
+            }
+        }
+    }
 }
 
-void get_position(int &x, int &y)
+// void draw_board(char **board, int n)
+// {
+
+//     for (int row = 0; row < n; row++)
+//     {
+//         cout << "  ";
+//         for (int col = 0; col < n; col++)
+//         {
+//             cout << board[row][col];
+//             if (col != n - 1)
+//             {
+//                 cout << "  |  ";
+//             }
+//             else
+//             {
+//                 cout << endl;
+//             }
+//         }
+//         if (row != n - 1)
+//         {
+
+//             cout << "_____|_____|_____" << endl;
+//             cout << "     |     |     " << endl;
+//         }
+//     }
+// }
+
+void get_position(char **board, int n, int &row, int &col, char player)
 {
-    bool bool1 = false;
-    int a = x;
-    int b = y;
-    while (!bool1)
+    int a = row;
+    int b = col;
+    do
     {
-        cout << "Enter the position of x and y" << endl;
-        cout << "x: ";
+        cout << "Enter the position of row and column" << endl;
+        cout << "row (0 to n-1) : ";
         cin >> a;
-        cout << "y: ";
+        cout << "column (0 to n-1) : ";
         cin >> b;
-        if (a > 2 || b > 2 || a < 0 || b < 0)
+        if (a > n - 1 || b > n - 1 || a < 0 || b < 0)
         {
-            cout << "Invalid position! try again" << endl;
+            system("cls");
+            cout << "Player " << player << "'s turn" << endl;
+            draw_board(board, n);
+            cout << "\nInvalid position! try again\n"
+                 << endl;
         }
         else
         {
-            bool1 = true;
-            x = a;
-            y = b;
+            row = a;
+            col = b;
         }
-    }
+    } while (a > n - 1 || b > n - 1 || a < 0 || b < 0);
 }
 
-bool Iswinner(char (&board)[3][3])
+bool Iswinner(char **board, int n)
 {
-    for (int row = 0; row < 3; row++)
+    // check rows
+    for (int row = 0; row < n; row++)
     {
-        if (board[row][0] == board[row][1] && board[row][1] == board[row][2] && board[row][0] != '_')
+        bool win = true;
+        for (int col = 0; col < n - 1; col++)
+        {
+            if (board[row][col] != board[row][col + 1] || board[row][col] == '_')
+            {
+                win = false;
+                break;
+            }
+        }
+        if (win)
         {
             return true;
         }
     }
-    for (int col = 0; col < 3; col++)
+    // check cols
+    for (int col = 0; col < n; col++)
     {
-        if (board[0][col] == board[1][col] && board[1][col] == board[2][col] && board[0][col] != '_')
+        bool win = true;
+        for (int row = 0; row < n - 1; row++)
+        {
+            if (board[row][col] != board[row + 1][col] || board[row][col] == '_')
+            {
+                win = false;
+                break;
+            }
+        }
+        if (win)
         {
             return true;
         }
     }
-
-    if (board[0][0] == board[1][1] && board[1][1] == board[2][2] && board[1][1] != '_')
+    // check diagnonals
+    bool win = true;
+    for (int i = 0; i < n - 1; i++)
+    {
+        if (board[i][i] != board[i + 1][i + 1] || board[i][i] == '_')
+        {
+            win = false;
+            break;
+        }
+    }
+    if (win)
     {
         return true;
     }
-    if (board[0][2] == board[1][1] && board[1][1] == board[2][0] && board[1][1] != '_')
+    win = true;
+    for (int i = 0; i < n - 1; i++)
+    {
+        if (board[i][n - 1 - i] != board[i + 1][n - 2 - i] || board[i][n - 1 - i] == '_')
+        {
+            win = false;
+            break;
+        }
+    }
+    if (win)
     {
         return true;
     }
@@ -83,16 +182,21 @@ void switch_player(char &player)
     }
 }
 
-void make_move(char (&board)[3][3], int &x, int &y, char player)
+bool isAvailable(char **board, int &x, int &y)
+{
+    return board[x][y] == '_';
+}
+
+void make_move(char **board, int &x, int &y, char player)
 {
     board[x][y] = player;
 }
 
-bool Isfull(char (&board)[3][3])
+bool Isfull(char **board, int n)
 {
-    for (int row = 0; row < 3; row++)
+    for (int row = 0; row < n; row++)
     {
-        for (int col = 0; col < 3; col++)
+        for (int col = 0; col < n; col++)
         {
             if (board[row][col] == '_')
             {
@@ -104,25 +208,33 @@ bool Isfull(char (&board)[3][3])
     }
 }
 
-void play_game(char (&board)[3][3])
+void play_game(char **board, int n)
 {
     char player = 'X';
     bool game_over = false;
+    int x, y;
     while (!game_over)
     {
         system("cls");
         cout << "Player " << player << "'s turn" << endl;
-        draw_board(board);
-        int x, y;
-        get_position(x, y);
+        draw_board(board, n);
+        get_position(board, n, x, y, player);
+        while (!isAvailable(board, x, y))
+        {
+            system("cls");
+            cout << "Player " << player << "'s turn" << endl;
+            draw_board(board, n);
+            cout << "Position is already taken! try again" << endl;
+            get_position(board, n, x, y, player);
+        }
         make_move(board, x, y, player);
-        draw_board(board);
-        if (Iswinner(board))
+        draw_board(board, n);
+        if (Iswinner(board, n))
         {
             game_over = true;
             cout << "Player " << player << " wins!" << endl;
         }
-        else if (Isfull(board))
+        else if (Isfull(board, n))
         {
             game_over = true;
             cout << "Tie!" << endl;
@@ -135,7 +247,31 @@ void play_game(char (&board)[3][3])
 }
 int main()
 {
-    char board[3][3] = {'_', '_', '_', '_', '_', '_', '_', '_', '_'};
-    play_game(board);
+    int n;
+
+    cout << "Welcome to Tic Tac Toe" << endl;
+    cout << "enter the size of the board (min 3) : ";
+    cin >> n;
+    while (n < 3)
+    {
+        system("cls");
+        cout << "Welcome to Tic Tac Toe" << endl;
+        cout << "enter the size of the board (min 3) : ";
+        cout << endl
+             << "Invalid size! try again" << endl;
+        cin >> n;
+    }
+
+    char **board = new char *[n];
+    for (int i = 0; i < n; i++)
+    {
+        board[i] = new char[n];
+        for (int j = 0; j < n; j++)
+        {
+            board[i][j] = '_';
+        }
+    }
+
+    play_game(board, n);
     return 0;
 }
