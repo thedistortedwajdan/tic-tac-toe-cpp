@@ -31,18 +31,14 @@ void draw_board(char **board, int n)
                     if (j == 0)
                     {
                         cout << "_____";
-                        if (i != n - 1)
-                        {
-                            cout << "|";
-                        }
                     }
                     else
                     {
                         cout << "     ";
-                        if (i != n - 1)
-                        {
-                            cout << "|";
-                        }
+                    }
+                    if (i != n - 1)
+                    {
+                        cout << "|";
                     }
                 }
                 cout << endl;
@@ -50,33 +46,6 @@ void draw_board(char **board, int n)
         }
     }
 }
-
-// void draw_board(char **board, int n)
-// {
-
-//     for (int row = 0; row < n; row++)
-//     {
-//         cout << "  ";
-//         for (int col = 0; col < n; col++)
-//         {
-//             cout << board[row][col];
-//             if (col != n - 1)
-//             {
-//                 cout << "  |  ";
-//             }
-//             else
-//             {
-//                 cout << endl;
-//             }
-//         }
-//         if (row != n - 1)
-//         {
-
-//             cout << "_____|_____|_____" << endl;
-//             cout << "     |     |     " << endl;
-//         }
-//     }
-// }
 
 void get_position(char **board, int n, int &row, int &col, char player)
 {
